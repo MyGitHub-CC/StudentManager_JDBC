@@ -95,9 +95,9 @@ public class StudentDao {
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "insert into student(name,sex,age) values ('"
+			String sql = "insert into student(name,sex,age,class_id) values ('"
 					+ student.getName() + "','" + student.getSex() + "',"
-					+ student.getAge() + ");";
+					+ student.getAge() + "," + student.getClass_id()+ "" + ");";
 			result = statement.executeUpdate(sql);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -116,12 +116,12 @@ public class StudentDao {
 		int result = 0;
 		try {
 			getConnection();
-			String sql = "update student set name=?, sex=?, age=? where id=?";
+			String sql = "update student set name=?, sex=?, age=? , class_id=? where id=" + student.getId();
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, student.getName());
 			preparedStatement.setString(2, student.getSex());
 			preparedStatement.setInt(3, student.getAge());
-			preparedStatement.setInt(4, student.getId());
+			preparedStatement.setInt(4, student.getClass_id());
 			result = preparedStatement.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -169,7 +169,7 @@ public class StudentDao {
 			statement = connection.createStatement();
 			for (int i = 0; i < idArr.length; i++) {
 				// 主面板中的第一行对应的rowIndex=0，故对应的学生的id=rowIndex+1
-				String sql = "delete from student WHERE id =" + (idArr[i]+1);
+				String sql = "delete from student WHERE id =" + (idArr[i]);
 				result = statement.executeUpdate(sql);
 			}
 			
@@ -203,6 +203,7 @@ public class StudentDao {
 				student.setName(resultSet.getString("name"));
 				student.setSex(resultSet.getString("sex"));
 				student.setAge(resultSet.getInt("age"));
+				student.setClass_id(resultSet.getInt("class_id"));
 				list.add(student);
 			}
 		} catch (SQLException e) {
@@ -218,18 +219,19 @@ public class StudentDao {
 	 * @param id 需要修改的学生的id
 	 * @return 对应id的学生的信息
 	 */
-	public Student findById(int id) {
+	public Student findById(int studentId) {
 		Student student = new Student();
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "select * from student where id=" + id;
+			String sql = "select * from student where id=" + studentId + ";";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				student.setId(resultSet.getInt("id"));
 				student.setName(resultSet.getString("name"));
 				student.setSex(resultSet.getString("sex"));
 				student.setAge(resultSet.getInt("age"));
+				student.setClass_id(resultSet.getInt("class_id"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -244,7 +246,7 @@ public class StudentDao {
 	 * @param conditionStudent: 对应条件的学生对象
 	 * @return 数据库中所有符合条件的学生的集合
 	 */
-	public List<Student> findByConditionStudent(Student conditionStudent, String className) {
+	public List<Student> findByConditionStudent(Student conditionStudent) {
 		List<Student> list = new ArrayList<Student>();
 		String sql;
 		try {
@@ -259,9 +261,11 @@ public class StudentDao {
 				sql += " and sex ='" + conditionStudent.getSex() + "'";
 			}
 			if (conditionStudent.getAge() > 0) {
-				sql += " and age ='" + conditionStudent.getAge() + "'";
+				sql += " and age =" + conditionStudent.getAge();
 			}
-			sql += " and class_id=(SELECT id FROM class WHERE NAME='" + className + "');";
+			
+			sql += " and class_id=" + conditionStudent.getClass_id() + ";";
+			// sql += " and class_id=(SELECT id FROM class WHERE NAME='" + conditionStudent.getClass_id() + "');";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();
@@ -269,6 +273,7 @@ public class StudentDao {
 				student.setName(resultSet.getString("name"));
 				student.setSex(resultSet.getString("sex"));
 				student.setAge(resultSet.getInt("age"));
+				student.setClass_id(resultSet.getInt("class_id"));
 				list.add(student);
 			}
 		} catch (SQLException e) {

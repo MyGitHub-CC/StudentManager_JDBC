@@ -13,7 +13,7 @@ import com.situ.student.entity.Student;
  */
 @SuppressWarnings("serial")
 public class StudentTableModel extends AbstractTableModel {
-	String[] columnNames = { "序号", "姓名", "性别", "年龄" };
+	String[] columnNames = { "序号", "姓名", "性别", "年龄" ,"班级"}; // 自己加班级一列
 
 	private List<Student> data;
 
@@ -50,6 +50,8 @@ public class StudentTableModel extends AbstractTableModel {
 			return stu.getSex();
 		} else if (columnIndex == 3) {
 			return stu.getAge();
+		} else if (columnIndex == 4) {
+			return stu.getClass_id(); // 自己加的class_id
 		}
 		return null;
 

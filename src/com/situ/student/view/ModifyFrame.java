@@ -4,9 +4,12 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,16 +28,21 @@ public class ModifyFrame {
 	JTextField ageTextField;
 	Student student;
 	
-	int id;// 要修改的学生的id
+	JComboBox comboBox;
+	Map<String, Integer> map;
+	String className;
+	int studentId;// 要修改的学生的id
 	CallBack callBack;
-	public ModifyFrame(CallBack callBack, int id) { // new ModifyFrame时传入callBack和需要修改学生的id
+	// new ModifyFrame时传入callBack和需要修改学生的id
+	public ModifyFrame(CallBack callBack, int studentId, String className) {
 		this.callBack = callBack;
-		this.id = id + 1;
+		this.studentId = studentId;
+		this.className = className;
 	}
 	
 	public void modify() {
-		// 根据id从数据库中找到对应的学生对象，为了将选中的学生的属性放入3个文本框中
-		student = studentManager.findById(id);
+		// 根据id从数据库中找到对应的学生对象，将选中的学生的属性放入3个文本框中
+		student = studentManager.findById(studentId);
 		frame = new JFrame();
 		frame.setTitle("修改学生");
 		frame.setSize(350, 260);
@@ -70,6 +78,22 @@ public class ModifyFrame {
 		panel3.add(ageTextField);
 		JPanel panel4 = new JPanel();
 		
+		// 添加班级下拉列表
+		JPanel classPanel = new JPanel();
+		JLabel classLabel=new JLabel("班级"); 
+		classPanel.add(classLabel);
+		String[] classArr = {"Java1701", "Java1703","HTML1701",  "UI1701"};
+		comboBox =new JComboBox(classArr);
+		comboBox.setSelectedItem(className);
+        comboBox.setPreferredSize(new Dimension(90, 30));
+        classPanel.add(comboBox);
+        
+    	map = new HashMap<String, Integer>();
+		map.put("Java1701", 1);
+		map.put("Java1703", 2);
+		map.put("HTML1701", 3);
+		map.put("UI1701", 4);
+		
 		JButton saveButton = new JButton();
 		saveButton.setText("保存");
 		saveButton.setPreferredSize(new Dimension(60,30));
@@ -79,7 +103,10 @@ public class ModifyFrame {
 				student.setName(nameTextField.getText());
 				student.setSex(sexTextField.getText());
 				student.setAge(Integer.parseInt(ageTextField.getText()));
-				student.setId(id);
+				student.setId(studentId);
+				String className = (String) comboBox.getSelectedItem();
+				int class_id = map.get(className);
+				student.setClass_id(class_id);
 				boolean flag = studentManager.modify(student);// 将修改后的学生的信息存入数据库中
 				String message = "保存成功！";
 				if (!flag) {
@@ -95,6 +122,7 @@ public class ModifyFrame {
 		mainPanel.add(panel1);
 		mainPanel.add(panel2);
 		mainPanel.add(panel3);
+		mainPanel.add(classPanel);
 		mainPanel.add(panel4);
 		
 		frame.setVisible(true);

@@ -72,7 +72,7 @@ public class StudentManager {
 	 * @param student
 	 * @return
 	 */
-	public List<Student> findByConditionStudent(Student student, String className) {
-		return studentDao.findByConditionStudent(student, className);
+	public List<Student> findByConditionStudent(Student student) {
+		return studentDao.findByConditionStudent(student);
 	}
 }

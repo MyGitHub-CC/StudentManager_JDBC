@@ -4,10 +4,13 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -25,7 +28,9 @@ public class AddFrame {
 	JTextField nameTextField;
 	JTextField sexTextField;
 	JTextField ageTextField;
-
+	JComboBox comboBox;
+	
+	Map<String, Integer> map;
 	CallBack callBack;
 	public AddFrame(CallBack callBack) {
 		this.callBack = callBack;
@@ -42,7 +47,7 @@ public class AddFrame {
 		BoxLayout boxLayout = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
 		mainPanel.setLayout(boxLayout);
 
-		// 新建4个子面板，并添加到添加学生的新窗口中的主面板中
+		// 新建5个子面板，并添加到添加学生的新窗口中的主面板中
 		JPanel panel1 = new JPanel();
 		JLabel nameLabel = new JLabel();
 		nameLabel.setText("姓名");
@@ -65,6 +70,21 @@ public class AddFrame {
 		ageTextField.setPreferredSize(new Dimension(90, 30));
 		panel3.add(ageTextField);
 		JPanel panel4 = new JPanel();
+		
+		// 添加班级下拉列表
+		JPanel classPanel = new JPanel();
+		JLabel classLabel=new JLabel("班级"); 
+		classPanel.add(classLabel);
+		String[] classArr = {"Java1701", "Java1703", "HTML1701", "UI1701"};
+		comboBox =new JComboBox(classArr);  
+        comboBox.setPreferredSize(new Dimension(90, 30));
+        classPanel.add(comboBox);
+        
+    	map = new HashMap<String, Integer>();
+		map.put("Java1701", 1);
+		map.put("Java1703", 2);
+		map.put("HTML1701", 3);
+		map.put("UI1701", 4);
 
 		JButton saveButton = new JButton();
 		saveButton.setText("保存");
@@ -79,6 +99,9 @@ public class AddFrame {
 					student.setName(nameTextField.getText());
 					student.setSex(sexTextField.getText());
 					student.setAge(Integer.parseInt(ageTextField.getText()));
+					String className = (String) comboBox.getSelectedItem();
+					int class_id = map.get(className);
+					student.setClass_id(class_id);
 					//调用控制层add方法，将新增的学生信息添加到数据库中
 					boolean flag = studentManager.add(student);
 					String message = "保存成功！";
@@ -96,8 +119,9 @@ public class AddFrame {
 		mainPanel.add(panel1);
 		mainPanel.add(panel2);
 		mainPanel.add(panel3);
+		mainPanel.add(classPanel); 
 		mainPanel.add(panel4);
-
+		
 		frame.setVisible(true);
 	}
 }
