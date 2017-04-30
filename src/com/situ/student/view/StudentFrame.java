@@ -141,14 +141,14 @@ public class StudentFrame {
 		deleteButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// 获取选中的学生的行号，如果未选择，则rowIndex默认是-1，从0开始
-				int rowIndex = table.getSelectedRow();
-				if (rowIndex > -1) {
+				// 获取所有选中的学生的行号数组，如果未选择，则rowsIndex数组的长度默认是0
+				int[] rowsIndex = table.getSelectedRows();
+				if (rowsIndex.length > 0) {
 					int result = JOptionPane.showConfirmDialog(null,
 							"是否要删除记录?", "标题YES_NO_OPTION", 0);
 					if (result == 0) {
-						// 主面板中的第一行对应的rowIndex=0，故对应的学生的id=rowIndex+1
-						boolean flag = studentManager.delete(rowIndex + 1);
+						// 调用控制层delete的重载方法，删除所有选中的学生信息
+						boolean flag = studentManager.delete(rowsIndex);
 						String message = "删除成功！";
 						if (!flag) {
 							message = "删除失败";
@@ -159,6 +159,25 @@ public class StudentFrame {
 				} else {
 					JOptionPane.showMessageDialog(null, "请选中要删除的学生！");
 				}
+				
+				// 获取选中的学生的行号，如果未选择，则rowIndex默认是-1，从0开始
+//				int rowIndex = table.getSelectedRow();	
+//				if (rowsIndex > -1) {
+//					int result = JOptionPane.showConfirmDialog(null,
+//							"是否要删除记录?", "标题YES_NO_OPTION", 0);
+//					if (result == 0) {
+//						// 主面板中的第一行对应的rowIndex=0，故对应的学生的id=rowIndex+1
+//						boolean flag = studentManager.delete(rowIndex + 1);
+//						String message = "删除成功！";
+//						if (!flag) {
+//							message = "删除失败";
+//						}
+//						JOptionPane.showMessageDialog(null, message);
+//						refreshFrame();
+//					}
+//				} else {
+//					JOptionPane.showMessageDialog(null, "请选中要删除的学生！");
+//				}
 			}
 		});
 		panel3.add(deleteButton);

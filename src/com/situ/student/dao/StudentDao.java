@@ -86,7 +86,7 @@ public class StudentDao {
 	}
 
 	/**
-	 * 传入新添加的学生的信息，添加到数据库中
+	 * 添加单个学生的信息到数据库中：传入新添加的学生的信息，添加到数据库中
 	 * @param student：新添加的学生的信息
 	 * @return 添加成功返回：1，添加失败返回：0
 	 */
@@ -131,18 +131,47 @@ public class StudentDao {
 		return result;
 	}
 	
+//	/**
+//	 * 删除单个学生的信息：传入要删除的学生的id，从数据库中删除对应的学生信息
+//	 * @param id: 要删除的学生的id
+//	 * @return 删除成功返回:1 删除失败返回：0
+//	 */
+//	public int delete(int id) {
+//		int result = 0;
+//		try {
+//			getConnection();
+//			statement = connection.createStatement();
+//			String sql = "delete from student WHERE id =" + id;
+//			result = statement.executeUpdate(sql);
+//			
+//			// 删除学生信息后重置id
+//			String sqlDeleteId = "alter table student drop column id;"; // 删除数据库中的id列
+//			statement.executeUpdate(sqlDeleteId);
+//			String sqlId = "alter table student add COLUMN id INT PRIMARY KEY AUTO_INCREMENT"; 
+//			statement.executeUpdate(sqlId); // 重新生成id列，使id从1开始递增
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		} finally {
+//			close(connection, statement);
+//		}
+//		return result;
+//	}
+
 	/**
-	 * 传入要删除的学生的id，从数据库中删除对应的学生信息
-	 * @param id: 要删除的学生的id
-	 * @return 删除成功返回:1 删除失败返回：0
+	 * 删除所有被选中的学生的信息：传入需要删除的所有学生的id数组，根据id删除数据库中对应学生的信息
+	 * @param idArr: 需要删除的所有学生的id数组
+	 * @return 删除成功返回：idArr数组的长度值，删除失败返回：0
 	 */
-	public int delete(int id) {
+	public int delete(int[] idArr) {
 		int result = 0;
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "delete from student WHERE id =" + id;
-			result = statement.executeUpdate(sql);
+			for (int i = 0; i < idArr.length; i++) {
+				// 主面板中的第一行对应的rowIndex=0，故对应的学生的id=rowIndex+1
+				String sql = "delete from student WHERE id =" + (idArr[i]+1);
+				result = statement.executeUpdate(sql);
+			}
 			
 			// 删除学生信息后重置id
 			String sqlDeleteId = "alter table student drop column id;"; // 删除数据库中的id列
@@ -156,7 +185,7 @@ public class StudentDao {
 		}
 		return result;
 	}
-
+	
 	/**
 	 * 从数据库中查询全部学生的信息
 	 * @return 数据库中查询全部学生的信息
@@ -211,7 +240,7 @@ public class StudentDao {
 	}
 	
 	/**
-	 * 传入一个student对象，从数据库中查询符合条件的学生的集合并返回这个集合
+	 * 查询符合条件的所有学生的信息：传入一个student对象，从数据库中查询符合条件的学生的集合并返回这个集合
 	 * @param conditionStudent: 对应条件的学生对象
 	 * @return 数据库中所有符合条件的学生的集合
 	 */

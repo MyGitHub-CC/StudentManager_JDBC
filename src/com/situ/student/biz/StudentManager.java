@@ -30,13 +30,23 @@ public class StudentManager {
 		return (result > 0) ? true : false;
 	}
 	
+//	/**
+//	 * 传入一个需要删除的学生的id，调用DAO层delete方法，根据id删除对应的学生数据
+//	 * @param id :一个需要删除的学生的id
+//	 * @return 删除成功返回：true，删除失败返回：false
+//	 */
+//	public boolean delete(int id) {
+//		int result = studentDao.delete(id);
+//		return (result > 0) ? true : false;
+//	}
+	
 	/**
-	 * 传入一个需要删除的学生的id，调用DAO层delete方法，根据id删除对应的学生数据
-	 * @param id
-	 * @return
+	 * 传入所有需要删除的学生的数组，调用DAO层重载的delete方法，根据数组中对应学生的id删除学生数据
+	 * @param idArr
+	 * @return 删除成功返回：true，删除失败返回：false
 	 */
-	public boolean delete(int id) {
-		int result = studentDao.delete(id);
+	public boolean delete(int[] idArr) {
+		int result = studentDao.delete(idArr);
 		return (result > 0) ? true : false;
 	}
 
