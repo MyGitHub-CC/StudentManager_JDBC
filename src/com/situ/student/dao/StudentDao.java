@@ -190,12 +190,12 @@ public class StudentDao {
 	 * 从数据库中查询全部学生的信息
 	 * @return 数据库中查询全部学生的信息
 	 */
-	public List<Student> findAll() {
+	public List<Student> findAll(String className) {
 		List<Student> list = new ArrayList<Student>();
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "select * from student";
+			String sql = "select * from student where class_id=(select id from class where name='" + className + "')";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();
@@ -244,15 +244,16 @@ public class StudentDao {
 	 * @param conditionStudent: 对应条件的学生对象
 	 * @return 数据库中所有符合条件的学生的集合
 	 */
-	public List<Student> findByConditionStudent(Student conditionStudent) {
+	public List<Student> findByConditionStudent(Student conditionStudent, String className) {
 		List<Student> list = new ArrayList<Student>();
+		String sql;
 		try {
 			getConnection();
 			statement = connection.createStatement();
 			// 当传入的student的对象的三个属性都为空字符串（age=-1）时，即三个文本框都为空时，查询全部学生的信息
-			String sql = "select * from student where 1=1 "; 
+			sql = "select * from student where 1=1 ";
 			if (!conditionStudent.getName().equals("")) {
-				sql += " and name ='" + conditionStudent.getName() +"'";
+				sql += " and name ='" + conditionStudent.getName() + "'";
 			}
 			if (!conditionStudent.getSex().equals("")) {
 				sql += " and sex ='" + conditionStudent.getSex() + "'";
@@ -260,6 +261,7 @@ public class StudentDao {
 			if (conditionStudent.getAge() > 0) {
 				sql += " and age ='" + conditionStudent.getAge() + "'";
 			}
+			sql += " and class_id=(SELECT id FROM class WHERE NAME='" + className + "');";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();

@@ -54,8 +54,8 @@ public class StudentManager {
 	 * 调用此方法，返回数据库中全部学生的信息
 	 * @return
 	 */
-	public List<Student> findAll() {
-		return studentDao.findAll();
+	public List<Student> findAll(String className) {
+		return studentDao.findAll(className);
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class StudentManager {
 	 * @param student
 	 * @return
 	 */
-	public List<Student> findByConditionStudent(Student student) {
-		return studentDao.findByConditionStudent(student);
+	public List<Student> findByConditionStudent(Student student, String className) {
+		return studentDao.findByConditionStudent(student, className);
 	}
 }

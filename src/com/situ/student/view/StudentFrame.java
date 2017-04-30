@@ -8,6 +8,7 @@ import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,20 +30,32 @@ public class StudentFrame {
 	JTextField sexTextField;
 	JTextField ageTextField;
 	JTable table;
-
+	JComboBox comboBox;
+	
+	String className;
 	public void init() {
 		JFrame frame = new JFrame();
 		frame.setTitle("欢迎进入学生信息管理系统");
-		frame.setSize(600, 500);
+		frame.setSize(600, 550);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel mainPanel = (JPanel) frame.getContentPane();
 		mainPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 		BoxLayout boxLayout = new BoxLayout(mainPanel, BoxLayout.Y_AXIS);
 		mainPanel.setLayout(boxLayout);
+		
+		JPanel classPanel = new JPanel();
+		classPanel.setLayout(new FlowLayout(FlowLayout.CENTER,10,20));
+		JLabel classLabel=new JLabel("班级名称"); 
+		classPanel.add(classLabel);
+		String[] classArr = {"Java1701", "Java1703", "UI1701"};
+		comboBox =new JComboBox(classArr);  
+        comboBox.setPreferredSize(new Dimension(200, 30));
+        classPanel.add(comboBox); 
+        mainPanel.add(classPanel); 
 
 		JPanel panel1 = new JPanel();
-		panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
+		panel1.setLayout(new FlowLayout(FlowLayout.CENTER));
 		JLabel nameLabel = new JLabel();
 		nameLabel.setText("姓名");
 		panel1.add(nameLabel);
@@ -76,7 +89,8 @@ public class StudentFrame {
 				}
 				// 接收用户从文本框中输入的内容，并赋值给student对象，作为查询学生的条件
 				Student student = new Student(name, sex, age);
-				list = studentManager.findByConditionStudent(student); // 接收查询符合条件的学生集合
+				className = (String) comboBox.getSelectedItem();
+				list = studentManager.findByConditionStudent(student,className); // 接收查询符合条件的学生集合
 				refreshFrame(list); // 刷新主面板
 			}
 
@@ -85,7 +99,8 @@ public class StudentFrame {
 		mainPanel.add(panel1);
 
 		JPanel panel2 = new JPanel();
-		list = studentManager.findAll(); // 初始化时，显示全部学生的信息
+		className = (String) comboBox.getSelectedItem();
+		list = studentManager.findAll(className); // 初始化时，显示全部学生的信息
 		studentTableModel = new StudentTableModel(list);
 		table = new JTable(studentTableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -190,7 +205,7 @@ public class StudentFrame {
 	 * 增删改完成后，从数据库中重新加载全部学生的数据，并刷新主面板中的数据
 	 */
 	public void refreshFrame() {
-		list = studentManager.findAll();
+		list = studentManager.findAll(className);
 		studentTableModel.setData(list);
 	}
 
