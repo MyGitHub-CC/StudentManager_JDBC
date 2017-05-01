@@ -4,7 +4,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -29,11 +28,15 @@ public class AddFrame {
 	JTextField sexTextField;
 	JTextField ageTextField;
 	JComboBox comboBox;
+//	List<StudentClass> classList;// 从数据库中获取所有班级的名称
+//	StudentClassManager studentClassManager = new StudentClassManager();
 	
 	Map<String, Integer> map; // 用于存放班级名称与student的class_id属性
 	CallBack callBack;
-	public AddFrame(CallBack callBack) {
+	int class_id;
+	public AddFrame(CallBack callBack, int class_id) {
 		this.callBack = callBack;
+		this.class_id = class_id;
 	}
 
 	public void add() {
@@ -71,21 +74,20 @@ public class AddFrame {
 		panel3.add(ageTextField);
 		JPanel panel4 = new JPanel();
 		
-		// 添加班级下拉列表
-		JPanel classPanel = new JPanel();
-		JLabel classLabel=new JLabel("班级"); 
-		classPanel.add(classLabel);
-		String[] classArr = {"请选择", "Java1701", "Java1703", "HTML1701", "UI1701"};
-		comboBox =new JComboBox(classArr);  
-        comboBox.setPreferredSize(new Dimension(90, 30));
-        classPanel.add(comboBox);
+//		 添加班级下拉列表
+//		JPanel classPanel = new JPanel();
+//		JLabel classLabel=new JLabel("班级"); 
+//		classPanel.add(classLabel);
+//		comboBox =new JComboBox();  
+//        comboBox.setPreferredSize(new Dimension(90, 30));
+//        classPanel.add(comboBox);
         
-        // 建一个map集合，用于将班级名称与student中的class_id对应，便于对数据库进行操作
-    	map = new HashMap<String, Integer>();
-		map.put("Java1701", 1);
-		map.put("Java1703", 2);
-		map.put("HTML1701", 3);
-		map.put("UI1701", 4);
+//        // 建一个map集合，用于将班级名称与student中的class_id对应，便于对数据库进行操作
+//    	map = new HashMap<String, Integer>();
+//		map.put("Java1701", 1);
+//		map.put("Java1703", 2);
+//		map.put("HTML1701", 3);
+//		map.put("UI1701", 4);
 
 		JButton saveButton = new JButton();
 		saveButton.setText("保存");
@@ -100,21 +102,31 @@ public class AddFrame {
 					student.setName(nameTextField.getText());
 					student.setSex(sexTextField.getText());
 					student.setAge(Integer.parseInt(ageTextField.getText()));
-					String className = (String) comboBox.getSelectedItem();
-					if (!className.equals("请选择")) {
-						student.setClass_id(map.get(className));
-						//调用控制层add方法，将新增的学生信息添加到数据库中
-						boolean flag = studentManager.add(student);
-						String message = "保存成功！";
-						if (!flag) {
-							message = "保存失败！";
-						}
-						JOptionPane.showMessageDialog(null, message);
-						frame.dispose();
-						callBack.callBack();
-					} else {
-						JOptionPane.showMessageDialog(null, "请选择班级");
+					student.setClass_id(class_id);
+					boolean flag = studentManager.add(student);
+					String message = "保存成功！";
+					if (!flag) {
+						message = "保存失败！";
 					}
+					JOptionPane.showMessageDialog(null, message);
+					frame.dispose();
+					callBack.callBack();
+					
+//					String className = (String) comboBox.getSelectedItem();
+//					if (!className.equals("请选择")) {
+//						student.setClass_id(map.get(className));
+//						//调用控制层add方法，将新增的学生信息添加到数据库中
+//						boolean flag = studentManager.add(student);
+//						String message = "保存成功！";
+//						if (!flag) {
+//							message = "保存失败！";
+//						}
+//						JOptionPane.showMessageDialog(null, message);
+//						frame.dispose();
+//						callBack.callBack();
+//					} else {
+//						JOptionPane.showMessageDialog(null, "请选择班级");
+//					}
 				}
 			}
 		});
@@ -123,7 +135,7 @@ public class AddFrame {
 		mainPanel.add(panel1);
 		mainPanel.add(panel2);
 		mainPanel.add(panel3);
-		mainPanel.add(classPanel); 
+//		mainPanel.add(classPanel); 
 		mainPanel.add(panel4);
 		
 		frame.setVisible(true);

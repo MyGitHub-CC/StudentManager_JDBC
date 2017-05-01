@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BoxLayout;
@@ -16,13 +17,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import com.situ.student.biz.StudentClassManager;
 import com.situ.student.biz.StudentManager;
 import com.situ.student.entity.Student;
+import com.situ.student.entity.StudentClass;
 import com.situ.student.util.CallBack;
 
 public class ModifyFrame {
 	JFrame frame;
+	List<StudentClass> classList;// 全部班级的集合
 	StudentManager studentManager = new StudentManager();
+	StudentClassManager studentClassManager = new StudentClassManager();// 班级管理控制层
 	JTextField nameTextField;
 	JTextField sexTextField;
 	JTextField ageTextField;
@@ -82,18 +87,22 @@ public class ModifyFrame {
 		JPanel classPanel = new JPanel();
 		JLabel classLabel=new JLabel("班级"); 
 		classPanel.add(classLabel);
-		String[] classArr = {"请选择", "Java1701", "Java1703","HTML1701",  "UI1701"};
-		comboBox =new JComboBox(classArr);
-		comboBox.setSelectedItem(className);
+		classList = studentClassManager.findAll();
+		comboBox = new JComboBox(); 
+		comboBox.addItem("请选择");
+		for (int i = 0; i < classList.size(); i++) {
+			comboBox.addItem(classList.get(i).getName());
+		}
+		comboBox.setSelectedItem(className);// 将下拉列表初始班级设置默认为原班级
         comboBox.setPreferredSize(new Dimension(90, 30));
         classPanel.add(comboBox);
         
         // 建一个map集合，用于将班级名称与student中的class_id对应，便于对数据库进行操作
     	map = new HashMap<String, Integer>();
-		map.put("Java1701", 1);
-		map.put("Java1703", 2);
-		map.put("HTML1701", 3);
-		map.put("UI1701", 4);
+    	classList = new StudentClassManager().findAll();
+		for (int i = 0; i < classList.size(); i++) {
+			map.put(classList.get(i).getName(), classList.get(i).getId());
+		}
 		
 		JButton saveButton = new JButton();
 		saveButton.setText("保存");
@@ -105,6 +114,7 @@ public class ModifyFrame {
 				student.setSex(sexTextField.getText());
 				student.setAge(Integer.parseInt(ageTextField.getText()));
 				student.setId(studentId);
+				
 				String className = (String) comboBox.getSelectedItem();
 				// 点击保存按钮时，如果用户更改了班级，则修改，否则仍为该学生原所在班级
 				if (!className.equals("请选择")) {

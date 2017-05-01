@@ -188,15 +188,44 @@ public class StudentDao {
 	}
 	
 	/**
-	 * 查询所有学生的信息：从数据库中查询全部学生的信息
+	 * 查询所有班级的学生的信息：从数据库中查询全部学生的信息
 	 * @return 数据库中查询全部学生的信息
 	 */
-	public List<Student> findAll() {
+	public List<Student> findAllList() {
+		List<Student> allStuList = new ArrayList<Student>();
+		try {
+			getConnection();
+			statement = connection.createStatement();
+			String sql = "select * from student;";
+			resultSet = statement.executeQuery(sql);
+			while (resultSet.next()) {
+				Student student = new Student();
+				student.setId(resultSet.getInt("id"));
+				student.setName(resultSet.getString("name"));
+				student.setSex(resultSet.getString("sex"));
+				student.setAge(resultSet.getInt("age"));
+				student.setClass_id(resultSet.getInt("class_id"));
+				allStuList.add(student);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close(connection, statement, resultSet);
+		}
+		return allStuList;
+	}
+	
+	/**
+	 * 查询选中的班级的所有学生的信息：从数据库中查询全部学生的信息
+	 * @return 数据库中查询全部学生的信息
+	 */
+	public List<Student> findAll(String className) {
 		List<Student> list = new ArrayList<Student>();
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "select * from student";
+			String sql = "select * from student where class_id=(select id from class where name='"
+					+ className + "');";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();

@@ -49,13 +49,21 @@ public class StudentManager {
 		int result = studentDao.delete(idArr);
 		return (result > 0) ? true : false;
 	}
-
+	
 	/**
 	 * 查询所有班级的学生信息：调用此方法，返回数据库中全部学生的信息
 	 * @return
 	 */
-	public List<Student> findAll() {
-		return studentDao.findAll();
+	public List<Student> findAllList() {
+		return studentDao.findAllList();
+	}
+
+	/**
+	 * 查询被选中的班级的所有学生信息：调用此方法，返回数据库中全部学生的信息
+	 * @return
+	 */
+	public List<Student> findAll(String className) {
+		return studentDao.findAll(className);
 	}
 	
 	/**
