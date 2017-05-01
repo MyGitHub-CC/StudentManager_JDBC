@@ -1,6 +1,8 @@
 package com.situ.student.model;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -51,10 +53,32 @@ public class StudentTableModel extends AbstractTableModel {
 		} else if (columnIndex == 3) {
 			return stu.getAge();
 		} else if (columnIndex == 4) {
-			return stu.getClass_id(); // 自己加的class_id
+			Map<Integer, String> map = new HashMap<Integer, String>();
+			map.put(1, "Java1701");
+			map.put(2, "Java1703");
+			map.put(3, "HTML1701");
+			map.put(4, "UI1701");
+			String className = map.get(stu.getClass_id());
+			return className; // 自己加的通过class_id取得对应的班级名称
 		}
 		return null;
 
+	}
+	
+	
+	// 自己写的一个方法，用于取得被选中要修改的学生的所在班级
+	// 通过被选中修改对象的行号，获得对应的学生的对象，再通过该学生对象的class_id获取学生所在的班级名称
+	public String getCellName(int rowIndex) {
+		// 取得被选中学生的id
+		int stuId = data.get(rowIndex).getClass_id();
+		Map<Integer, String> map = new HashMap<Integer, String>();
+		map.put(1, "Java1701");
+		map.put(2, "Java1703");
+		map.put(3, "HTML1701");
+		map.put(4, "UI1701");
+		String className = map.get(stuId);
+		
+		return className;
 	}
 
 	public void setData(List<Student> data) {

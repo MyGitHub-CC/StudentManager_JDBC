@@ -82,12 +82,13 @@ public class ModifyFrame {
 		JPanel classPanel = new JPanel();
 		JLabel classLabel=new JLabel("班级"); 
 		classPanel.add(classLabel);
-		String[] classArr = {"Java1701", "Java1703","HTML1701",  "UI1701"};
+		String[] classArr = {"请选择", "Java1701", "Java1703","HTML1701",  "UI1701"};
 		comboBox =new JComboBox(classArr);
 		comboBox.setSelectedItem(className);
         comboBox.setPreferredSize(new Dimension(90, 30));
         classPanel.add(comboBox);
         
+        // 建一个map集合，用于将班级名称与student中的class_id对应，便于对数据库进行操作
     	map = new HashMap<String, Integer>();
 		map.put("Java1701", 1);
 		map.put("Java1703", 2);
@@ -105,8 +106,10 @@ public class ModifyFrame {
 				student.setAge(Integer.parseInt(ageTextField.getText()));
 				student.setId(studentId);
 				String className = (String) comboBox.getSelectedItem();
-				int class_id = map.get(className);
-				student.setClass_id(class_id);
+				// 点击保存按钮时，如果用户更改了班级，则修改，否则仍为该学生原所在班级
+				if (!className.equals("请选择")) {
+					student.setClass_id(map.get(className));
+				}
 				boolean flag = studentManager.modify(student);// 将修改后的学生的信息存入数据库中
 				String message = "保存成功！";
 				if (!flag) {

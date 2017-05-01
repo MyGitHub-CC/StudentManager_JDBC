@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 /**
  * 创建学生实体类，属性和数据库中的列名一一对应
- * 
  * @author Administrator
  */
 @SuppressWarnings("serial")

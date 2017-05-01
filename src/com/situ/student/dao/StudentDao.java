@@ -86,7 +86,7 @@ public class StudentDao {
 	}
 
 	/**
-	 * 添加单个学生的信息到数据库中：传入新添加的学生的信息，添加到数据库中
+	 * 添加一个学生的信息到数据库中：传入新添加的学生的信息，添加到数据库中
 	 * @param student：新添加的学生的信息
 	 * @return 添加成功返回：1，添加失败返回：0
 	 */
@@ -108,7 +108,7 @@ public class StudentDao {
 	}
 	
 	/**
-	 * 传入一个修改后的学生对象，修改数据库中对应的id的学生的数据
+	 * 修改数据库中对应id的学生信息：传入一个修改后的学生对象，修改数据库中对应的id的学生的数据
 	 * @param student:修改后的学生对象
 	 * @return 修改成功返回：1，修改失败返回：0
 	 */
@@ -116,7 +116,8 @@ public class StudentDao {
 		int result = 0;
 		try {
 			getConnection();
-			String sql = "update student set name=?, sex=?, age=? , class_id=? where id=" + student.getId();
+			String sql = "update student set name=?, sex=?, age=? , class_id=? where id="
+					+ student.getId();
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, student.getName());
 			preparedStatement.setString(2, student.getSex());
@@ -168,7 +169,7 @@ public class StudentDao {
 			getConnection();
 			statement = connection.createStatement();
 			for (int i = 0; i < idArr.length; i++) {
-				// 主面板中的第一行对应的rowIndex=0，故对应的学生的id=rowIndex+1
+				// 主面板中的对应学生的id与数据库中学生的id一致
 				String sql = "delete from student WHERE id =" + (idArr[i]);
 				result = statement.executeUpdate(sql);
 			}
@@ -187,15 +188,15 @@ public class StudentDao {
 	}
 	
 	/**
-	 * 从数据库中查询全部学生的信息
+	 * 查询所有学生的信息：从数据库中查询全部学生的信息
 	 * @return 数据库中查询全部学生的信息
 	 */
-	public List<Student> findAll(String className) {
+	public List<Student> findAll() {
 		List<Student> list = new ArrayList<Student>();
 		try {
 			getConnection();
 			statement = connection.createStatement();
-			String sql = "select * from student where class_id=(select id from class where name='" + className + "')";
+			String sql = "select * from student";
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();
@@ -215,7 +216,7 @@ public class StudentDao {
 	}
 
 	/**
-	 * 传入需要修改的学生的id，返回对应id的学生的信息
+	 * 从数据库中查询对应id的学生信息并返回：传入需要修改的学生的id，返回对应id的学生的信息
 	 * @param id 需要修改的学生的id
 	 * @return 对应id的学生的信息
 	 */
@@ -255,7 +256,7 @@ public class StudentDao {
 			// 当传入的student的对象的三个属性都为空字符串（age=-1）时，即三个文本框都为空时，查询全部学生的信息
 			sql = "select * from student where 1=1 ";
 			if (!conditionStudent.getName().equals("")) {
-				sql += " and name ='" + conditionStudent.getName() + "'";
+				sql += " and name like + '%" + conditionStudent.getName() + "%'";
 			}
 			if (!conditionStudent.getSex().equals("")) {
 				sql += " and sex ='" + conditionStudent.getSex() + "'";
@@ -263,9 +264,10 @@ public class StudentDao {
 			if (conditionStudent.getAge() > 0) {
 				sql += " and age =" + conditionStudent.getAge();
 			}
-			
-			sql += " and class_id=" + conditionStudent.getClass_id() + ";";
-			// sql += " and class_id=(SELECT id FROM class WHERE NAME='" + conditionStudent.getClass_id() + "');";
+			if (conditionStudent.getClass_id() > 0) {
+				sql += " and class_id=" + conditionStudent.getClass_id() + ";";
+				// sql += " and class_id=(SELECT id FROM class WHERE NAME='" + conditionStudent.getClass_id() + "');";
+			}
 			resultSet = statement.executeQuery(sql);
 			while (resultSet.next()) {
 				Student student = new Student();

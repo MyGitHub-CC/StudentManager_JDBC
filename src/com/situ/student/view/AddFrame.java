@@ -30,7 +30,7 @@ public class AddFrame {
 	JTextField ageTextField;
 	JComboBox comboBox;
 	
-	Map<String, Integer> map;
+	Map<String, Integer> map; // 用于存放班级名称与student的class_id属性
 	CallBack callBack;
 	public AddFrame(CallBack callBack) {
 		this.callBack = callBack;
@@ -75,11 +75,12 @@ public class AddFrame {
 		JPanel classPanel = new JPanel();
 		JLabel classLabel=new JLabel("班级"); 
 		classPanel.add(classLabel);
-		String[] classArr = {"Java1701", "Java1703", "HTML1701", "UI1701"};
+		String[] classArr = {"请选择", "Java1701", "Java1703", "HTML1701", "UI1701"};
 		comboBox =new JComboBox(classArr);  
         comboBox.setPreferredSize(new Dimension(90, 30));
         classPanel.add(comboBox);
         
+        // 建一个map集合，用于将班级名称与student中的class_id对应，便于对数据库进行操作
     	map = new HashMap<String, Integer>();
 		map.put("Java1701", 1);
 		map.put("Java1703", 2);
@@ -100,17 +101,20 @@ public class AddFrame {
 					student.setSex(sexTextField.getText());
 					student.setAge(Integer.parseInt(ageTextField.getText()));
 					String className = (String) comboBox.getSelectedItem();
-					int class_id = map.get(className);
-					student.setClass_id(class_id);
-					//调用控制层add方法，将新增的学生信息添加到数据库中
-					boolean flag = studentManager.add(student);
-					String message = "保存成功！";
-					if (!flag) {
-						message = "保存失败！";
+					if (!className.equals("请选择")) {
+						student.setClass_id(map.get(className));
+						//调用控制层add方法，将新增的学生信息添加到数据库中
+						boolean flag = studentManager.add(student);
+						String message = "保存成功！";
+						if (!flag) {
+							message = "保存失败！";
+						}
+						JOptionPane.showMessageDialog(null, message);
+						frame.dispose();
+						callBack.callBack();
+					} else {
+						JOptionPane.showMessageDialog(null, "请选择班级");
 					}
-					JOptionPane.showMessageDialog(null, message);
-					frame.dispose();
-					callBack.callBack();
 				}
 			}
 		});

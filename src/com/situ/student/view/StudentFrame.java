@@ -34,13 +34,13 @@ public class StudentFrame {
 	JTable table;
 	JComboBox comboBox;
 	
-	Map<String, Integer> map;
-	String className;
+	Map<String, Integer> map;// 用于存放班级名称与student的class_id属性
+	String className;// 班级名称
 	public void init() {
 		// 新建学生管理系统主窗口及主面板
 		JFrame frame = new JFrame();
 		frame.setTitle("欢迎进入学生信息管理系统");
-		frame.setSize(600, 550);
+		frame.setSize(650, 550);
 		frame.setLocationRelativeTo(null);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		JPanel mainPanel = (JPanel) frame.getContentPane();
@@ -51,14 +51,15 @@ public class StudentFrame {
 		// 新建3+1个子面板，并添加到主面板中去
 		// 添加班级下拉列表
 		JPanel classPanel = new JPanel();
-		classPanel.setLayout(new FlowLayout(FlowLayout.CENTER,10,20));
+		classPanel.setLayout(new FlowLayout(FlowLayout.CENTER,15,15));
 		JLabel classLabel=new JLabel("班级名称"); 
 		classPanel.add(classLabel);
-		String[] classArr = {"Java1701", "Java1703", "HTML1701", "UI1701"};
+		String[] classArr = {"请选择","Java1701", "Java1703", "HTML1701", "UI1701"};
 		comboBox =new JComboBox(classArr);  
-        comboBox.setPreferredSize(new Dimension(200, 30));
+        comboBox.setPreferredSize(new Dimension(180, 30));
         classPanel.add(comboBox); 
         mainPanel.add(classPanel); 
+        
         // 用一个map集合将班级名称与student中的class_id对应起来，方便后续操作
         map = new HashMap<String, Integer>();
 		map.put("Java1701", 1);
@@ -102,20 +103,22 @@ public class StudentFrame {
 				}
 				// 获取下拉列表的内容
 				className = (String) comboBox.getSelectedItem();
-				// 根据下拉列表的内容（班级名称），获取对应的student的class_id（即通过键取map中的值）
-				int class_id = map.get(className);
+				int class_id = -1;
+				if (!className.equals("请选择")) {
+					// 根据下拉列表的内容（班级名称），获取对应的student的class_id（即通过键取map中的值）
+					class_id = map.get(className);
+				}
 				// 接收用户从文本框中输入的内容，并赋值给student对象，作为查询学生的条件
 				Student student = new Student(name, sex, age, class_id);
 				list = studentManager.findByConditionStudent(student); // 接收查询符合条件的学生集合
-				refreshFrame(list); // 刷新主面板
+				refreshFrame(list); // 按条件查找后得到结果，刷新主面板
 			}
 		});
 		panel1.add(searchButton);
 		mainPanel.add(panel1);
 
 		JPanel panel2 = new JPanel();
-		className = (String) comboBox.getSelectedItem();
-		list = studentManager.findAll(className); // 初始化时，显示当前班级的全部学生的信息
+		list = studentManager.findAll(); // 初始化时，显示当前班级的全部学生的信息
 		studentTableModel = new StudentTableModel(list);
 		table = new JTable(studentTableModel);
 		JScrollPane scrollPane = new JScrollPane(table);
@@ -150,12 +153,14 @@ public class StudentFrame {
 			public void actionPerformed(ActionEvent e) {
 				// 获取选中的学生的行号，如果未选择，则rowIndex默认是-1
 				int rowIndex = table.getSelectedRow();
-				className = (String) comboBox.getSelectedItem();
 				// int class_id = map.get(className);
 				if (rowIndex > -1) {
+					// className = map.get(list.get(rowIndex).getClass_id());
 					// *重要*：当前主面板的内容，即是当前的list集合，被选中的行号刚好等于list集合中的学生的下标
 					// 通过下标取得对应的学生的在数据库中的id
 					int studentId = list.get(rowIndex).getId();
+					// 通过被选中修改对象的行号，获得对应的学生的对象，再通过该学生对象的class_id获取学生所在的班级名称
+					className = studentTableModel.getCellName(rowIndex);
 					ModifyFrame modifyFrame = new ModifyFrame(new CallBack() {
 						@Override
 						public void callBack() {
@@ -201,7 +206,7 @@ public class StudentFrame {
 				}
 				
 				
-				// 获取选中的学生的行号，如果未选择，则rowIndex默认是-1，从0开始
+				// 删除单个学生：获取选中的学生的行号，如果未选择，则rowIndex默认是-1，从0开始
 //				int rowIndex = table.getSelectedRow();	
 //				if (rowsIndex > -1) {
 //					int result = JOptionPane.showConfirmDialog(null,
@@ -231,7 +236,7 @@ public class StudentFrame {
 	 * 增删改完成后，从数据库中重新加载全部学生的数据，并刷新主面板中的数据
 	 */
 	public void refreshFrame() {
-		list = studentManager.findAll(className);
+		list = studentManager.findAll();
 		studentTableModel.setData(list);
 	}
 
