@@ -63,10 +63,6 @@ public class StudentTableModel extends AbstractTableModel {
 			for (int i = 0; i < classList.size(); i++) {
 				map.put(classList.get(i).getId(), classList.get(i).getName());
 			}
-//			map.put(1, "Java1701");
-//			map.put(2, "Java1703");
-//			map.put(3, "HTML1701");
-//			map.put(4, "UI1701");
 			String className = map.get(stu.getClass_id());
 			return className; // 自己加的通过class_id取得对应的班级名称
 		}

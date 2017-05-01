@@ -50,7 +50,7 @@ public class StudentClassFrame {
 		panel1.setLayout(new FlowLayout(FlowLayout.CENTER,15,15));
 		JLabel classLabel=new JLabel("班级名称:"); 
 		panel1.add(classLabel);
-		// 从数据库中取得所有班级的信息，放入classList集合中
+		// 从数据库中取得所有班级的信息，放入classList集合中，防止新添加班级后，出现空指针异常
 		classList = studentClassManager.findAll();
 		comboBox = new JComboBox(); 
 		comboBox.addItem("请选择");
@@ -117,6 +117,12 @@ public class StudentClassFrame {
 		modifyButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// 重新从数据库中获取所有班级集合，放入map集合中，防止新添加班级后，出现空指针异常
+				classList = studentClassManager.findAll();
+				for (int i = 0; i < classList.size(); i++) {
+					map.put(classList.get(i).getName(), classList.get(i).getId());
+				}
+				
 				className = (String) comboBox.getSelectedItem();
 				if (!className.equals("请选择")) {
 					studentClass.setId(map.get(className));
